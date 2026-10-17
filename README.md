@@ -6,7 +6,7 @@
 
 直接运行编译生成的 `target/release/lcsc-downloader.exe`。
 
-`assets/app.png` 是编译时嵌入的窗口图标，运行时不需要附带 assets 文件夹。项目直接使用 Cargo 构建，不包含自定义构建脚本或 exe 图标资源。
+`assets/app.png` 是窗口图标，`assets/app.ico` 是 Windows exe 图标。PNG 在编译时嵌入，ICO 由 Cargo 自动执行的 `build.rs` 写入程序资源；运行时不需要附带 assets 文件夹。
 
 从源码运行：
 
@@ -67,11 +67,11 @@ src/
     └── files.rs         # 目录替换、备份与回滚 / Directory publishing, backup, and rollback
 ```
 
-`assets/` 仅保存窗口图标。源码按现有职责划分，不包含测试目录、测试样例或自定义构建脚本。
+`assets/` 保存窗口图标与 Windows exe 图标，`build.rs` 仅处理 Windows 图标资源。源码按现有职责划分，不包含测试目录或测试样例。
 
 ## 开发约定
 
-项目使用 Rust 2024 edition，最低 Rust 版本为 1.88。提交 `Cargo.lock` 以固定依赖解析结果。
+项目使用 Rust 2024 edition；升级到 eframe 0.37 后，最低 Rust 版本为 1.95。提交 `Cargo.lock` 以固定依赖解析结果。
 
 Cargo 包名为 `lcsc-downloader`，Rust 库名及代码引用为 `lcsc_downloader`。Cargo 默认将包名中的连字符转换为库名中的下划线，见 [Cargo targets](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#the-name-field)。外层项目目录 `Lcsc-Downloader` 与包名独立，保留现名；Cargo 允许通过 `--name` 单独指定包名，见 [cargo new](https://doc.rust-lang.org/cargo/commands/cargo-new.html)。`src/` 及模块目录沿用 Cargo 布局和 Rust 模块命名约定。
 

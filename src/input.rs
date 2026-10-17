@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, fmt::Write};
 
 use anyhow::{Result, ensure};
 use sha2::{Digest, Sha256};
@@ -44,12 +44,13 @@ pub fn safe_name(model: &str) -> Result<String> {
         name.insert(0, '_');
     }
     if name.chars().count() > 120 {
-        let digest = format!("{:x}", Sha256::digest(name.as_bytes()));
-        name = format!(
-            "{}_{}",
-            name.chars().take(100).collect::<String>(),
-            &digest[..12]
-        );
+        // 保留摘要前六字节的补零小写十六进制，兼容已有长文件名。 / Keep zero-padded lowercase hex for the first six digest bytes to preserve existing long filenames.
+        let digest = Sha256::digest(name.as_bytes());
+        let mut suffix = String::with_capacity(12);
+        for byte in &digest[..6] {
+            write!(&mut suffix, "{byte:02x}")?;
+        }
+        name = format!("{}_{}", name.chars().take(100).collect::<String>(), suffix);
     }
     Ok(name)
 }

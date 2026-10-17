@@ -85,7 +85,7 @@ impl DownloaderApp {
         visuals.widgets.hovered.weak_bg_fill = Color32::from_rgb(239, 246, 255);
         visuals.widgets.hovered.bg_stroke = egui::Stroke::new(1.0_f32, BLUE);
         context.egui_ctx.set_visuals(visuals);
-        context.egui_ctx.style_mut(|style| {
+        context.egui_ctx.global_style_mut(|style| {
             style.spacing.item_spacing = egui::vec2(10.0, 8.0);
             style.spacing.button_padding = egui::vec2(14.0, 6.0);
             style.spacing.interact_size.y = CONTROL_HEIGHT;
@@ -398,7 +398,7 @@ impl DownloaderApp {
                                     .show(ui, |ui| {
                                         ui.add_sized(
                                             [ui.available_width(), height],
-                                            edit.frame(false),
+                                            edit.frame(egui::Frame::NONE),
                                         );
                                     });
                             });
@@ -652,6 +652,7 @@ impl DownloaderApp {
                 .halign(egui::Align::Center),
         )
         .on_hover_text(&self.summary);
+        // 圆角进度条在零进度时仍有最小填充，未开始任务时将填充设为透明。 / Rounded progress bars retain a minimum fill at zero; make it transparent before a batch starts.
         ui.add(
             egui::ProgressBar::new(if self.total == 0 {
                 0.0
@@ -659,6 +660,11 @@ impl DownloaderApp {
                 self.completed as f32 / self.total as f32
             })
             .desired_height(6.0)
+            .fill(if self.total == 0 {
+                Color32::TRANSPARENT
+            } else {
+                BLUE
+            })
             .animate(busy),
         );
         ui.collapsing("详细日志", |ui| {
@@ -673,8 +679,8 @@ impl DownloaderApp {
 }
 
 impl eframe::App for DownloaderApp {
-    /// 处理后台事件与关闭请求，再按预留区域布局界面。 / Process background events and close requests before laying out the reserved UI regions.
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    /// 消费后台事件并处理关闭请求，窗口隐藏时也维持任务状态更新。 / Consume background events and handle close requests, keeping task state current while the window is hidden.
+    fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.receive();
         let busy = self.cancel.is_some();
         if busy && ctx.input(|input| input.viewport().close_requested()) {
@@ -684,8 +690,14 @@ impl eframe::App for DownloaderApp {
             }
             self.summary = "正在取消，完成后可关闭窗口".into();
         }
+    }
+
+    /// 在根界面中依次布局底部操作区、输入区和任务列表。 / Lay out footer actions, input controls, and the task list within the root UI.
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        let ctx = ui.ctx().clone();
+        let busy = self.cancel.is_some();
         // 先布局底部操作区，确保任务列表增长时按钮仍可见。 / Lay out the footer first so its actions remain visible as the queue grows.
-        egui::TopBottomPanel::bottom("download_actions")
+        egui::Panel::bottom("download_actions")
             .resizable(false)
             .frame(
                 egui::Frame::new()
@@ -697,8 +709,8 @@ impl eframe::App for DownloaderApp {
                         bottom: 16,
                     }),
             )
-            .show(ctx, |ui| self.footer(ui, busy, ctx));
-        egui::TopBottomPanel::top("download_input")
+            .show(ui, |ui| self.footer(ui, busy, &ctx));
+        egui::Panel::top("download_input")
             .resizable(false)
             .frame(
                 egui::Frame::new()
@@ -710,7 +722,7 @@ impl eframe::App for DownloaderApp {
                         bottom: 8,
                     }),
             )
-            .show(ctx, |ui| self.input_panel(ui, busy));
+            .show(ui, |ui| self.input_panel(ui, busy));
         egui::CentralPanel::default()
             .frame(
                 egui::Frame::new()
@@ -722,6 +734,6 @@ impl eframe::App for DownloaderApp {
                         bottom: 8,
                     }),
             )
-            .show(ctx, |ui| self.queue_panel(ui, busy, ctx));
+            .show(ui, |ui| self.queue_panel(ui, busy, &ctx));
     }
 }
