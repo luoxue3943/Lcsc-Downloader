@@ -1,1 +1,6 @@
-/target
+/target/
+/dist/
+/.idea/
+*.log
+*.user
+.DS_Store

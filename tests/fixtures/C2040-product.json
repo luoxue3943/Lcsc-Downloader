@@ -1,0 +1,44 @@
+{
+  "model": "RP2040",
+  "description": "CPU内核:ARM Cortex-M0+;CPU最大主频:133MHz;CPU位数:32 Bit;",
+  "symbol": {
+    "uuid": "1191450f6d484ddba4f344b5bf46e261",
+    "title": "rp2040",
+    "display_title": "RP2040"
+  },
+  "footprint": {
+    "uuid": "ae1c2f692ba64f668339783c85d9e637",
+    "title": "lqfn-56_l7.0-w7.0-p0.4-ep",
+    "display_title": "LQFN-56_L7.0-W7.0-P0.4-EP"
+  },
+  "attributes": {
+    "LCSC Part Name": "SC0914(13)",
+    "Supplier Part": "C2040",
+    "Manufacturer": "Raspberry Pi(树莓派)",
+    "Manufacturer Part": "RP2040",
+    "Supplier Footprint": "LQFN-56(7x7)",
+    "JLCPCB Part Class": "Extended Part",
+    "Datasheet": "https://item.szlcsc.com/datasheet/RP2040/2392.html",
+    "Supplier": "LCSC",
+    "Add into BOM": "yes",
+    "Convert to PCB": "yes",
+    "Symbol": "1191450f6d484ddba4f344b5bf46e261",
+    "Designator": "U?",
+    "Footprint": "ae1c2f692ba64f668339783c85d9e637",
+    "3D Model": "6aba77e112f94190bc358c1827f6a3d4",
+    "3D Model Title": "LQFN-56_L7.0-W7.0-P0.4-EP",
+    "3D Model Transform": "276.377,276.377,0,0,0,0,0,0,0",
+    "CPU Core": "ARM Cortex-M0+",
+    "CPU Maximum Speed": "133MHz",
+    "Core Size": "32 Bit",
+    "Program Memory Type": "外接",
+    "RAM Size": "264KB",
+    "Number of I/O": "30",
+    "ADC (Bit)": "12bit",
+    "Oscillator Type": "内置+外置",
+    "Voltage - Supply": "1.8V~3.3V",
+    "Operating Temperature": "-20℃~+85℃",
+    "Name": "={Manufacturer Part}"
+  },
+  "id": "C2040"
+}
