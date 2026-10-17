@@ -5,12 +5,12 @@ use std::{
     thread,
 };
 
-use Lcsc_Downloader::{
+use eframe::egui::{self, Color32, RichText};
+use lcsc_downloader::{
     config::{self, Settings},
     download::{self, DownloadEvent, DownloadRequest},
     input::{decode_text, parse_ids},
 };
-use eframe::egui::{self, Color32, RichText};
 use tokio_util::sync::CancellationToken;
 
 const BLUE: Color32 = Color32::from_rgb(37, 99, 235);

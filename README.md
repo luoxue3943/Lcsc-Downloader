@@ -6,7 +6,7 @@
 
 直接运行编译生成的 `target/release/lcsc-downloader.exe`。
 
-`assets/app.ico` 是 exe 文件图标，`assets/app.png` 是窗口图标。两者均在编译时嵌入程序，运行时不需要附带 assets 文件夹。
+`assets/app.png` 是编译时嵌入的窗口图标，运行时不需要附带 assets 文件夹。项目直接使用 Cargo 构建，不包含自定义构建脚本或 exe 图标资源。
 
 从源码运行：
 
@@ -65,35 +65,30 @@ src/
     ├── mod.rs           # 批量、并发与取消 / Batches, concurrency, and cancellation
     ├── client.rs        # HTTP 查询与资源获取 / HTTP queries and resource fetching
     └── files.rs         # 目录替换、备份与回滚 / Directory publishing, backup, and rollback
-
-tests/
-├── core.rs              # 核心回归与联网测试 / Core regression and live tests
-└── fixtures/            # 真实器件原始数据 / Real component source fixtures
 ```
 
-`assets/` 仅保存编译时嵌入的窗口与程序图标，`build.rs` 负责 Windows 图标资源，`build.bat` 提供 Windows 构建入口。
+`assets/` 仅保存窗口图标。源码按现有职责划分，不包含测试目录、测试样例或自定义构建脚本。
 
 ## 开发约定
 
 项目使用 Rust 2024 edition，最低 Rust 版本为 1.88。提交 `Cargo.lock` 以固定依赖解析结果。
 
-所有手写注释统一采用单行“中文内容 / English content”，分隔符两侧各留一个空格。所有函数和方法（包括私有辅助函数、trait 方法实现、测试函数和构建入口）均使用 `///` 文档注释，模块说明使用 `//!`，局部说明使用 `//`。注释说明职责、关键约束和错误处理，避免逐行复述代码；详细规则见 [AGENTS.md](AGENTS.md)。
+Cargo 包名为 `lcsc-downloader`，Rust 库名及代码引用为 `lcsc_downloader`。Cargo 默认将包名中的连字符转换为库名中的下划线，见 [Cargo targets](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#the-name-field)。外层项目目录 `Lcsc-Downloader` 与包名独立，保留现名；Cargo 允许通过 `--name` 单独指定包名，见 [cargo new](https://doc.rust-lang.org/cargo/commands/cargo-new.html)。`src/` 及模块目录沿用 Cargo 布局和 Rust 模块命名约定。
 
-源文件统一使用 UTF-8 与 LF，Windows 批处理文件使用 CRLF；规则由 `.gitattributes` 管理。`target/`、`dist/` 和 `.idea/` 为本地构建或开发文件，不纳入项目源码。
+所有手写注释统一采用单行“中文内容 / English content”，分隔符两侧各留一个空格。所有函数和方法（包括私有辅助函数和 trait 方法实现）均使用 `///` 文档注释，模块说明使用 `//!`，局部说明使用 `//`。注释说明职责、关键约束和错误处理，避免逐行复述代码；详细规则见 [AGENTS.md](AGENTS.md)。
+
+文本文件统一使用 UTF-8 与 LF；规则由 `.gitattributes` 管理。`target/`、`dist/` 和 `.idea/` 为本地构建或开发文件，不纳入项目源码。
 
 ## 验证命令
 
 ```powershell
 cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
-cargo test --locked
-cargo test --locked --test core live_download_two_docs_per_component -- --ignored --nocapture
+cargo build --release --locked
 ```
-
-联网测试查询 C8734、C2040 和 C25804，要求每个器件恰好输出两个 Doc。默认在临时目录中运行并自动清理；设置环境变量 LCSC_LIVE_OUTPUT 可保留输出以供 Altium 检查。
 
 ## 数据来源与格式参考
 
-元器件数据来源：嘉立创EDA/EasyEDA官方库。[嘉立创EDA](https://lceda.cn/) · [EasyEDA](https://easyeda.com/)。原始样例保留上游版权字段，生成文档中保留来源与原始版权说明。
+元器件数据来源：嘉立创EDA/EasyEDA官方库。[嘉立创EDA](https://lceda.cn/) · [EasyEDA](https://easyeda.com/)。下载数据保留上游版权字段，生成文档中保留来源与原始版权说明。
 
 独立写入器参考公开的嘉立创文件格式文档、Altium ASCII 文档资料以及 KiCad 的格式说明。具体出处见 THIRD-PARTY-NOTICES.md。

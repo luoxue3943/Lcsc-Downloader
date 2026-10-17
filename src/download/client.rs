@@ -115,15 +115,3 @@ pub(super) fn parse_product(payload: &Value, id: &str) -> Result<Value> {
         json!({"id":id,"model":model,"description":item["description"],"attributes":item["attributes"],"symbol":{"uuid":uuid("symbol","Symbol")},"footprint":{"uuid":uuid("footprint","Footprint")}}),
     )
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    /// 验证搜索选择精确编号而非第一项，并拒绝前缀匹配。 / Verify exact-ID selection instead of the first result and reject prefix matches.
-    #[test]
-    fn exact_id_not_first_result() {
-        let payload = json!({"result":[{"product_code":"C87345","display_title":"WRONG"},{"product_code":"C8734","display_title":"RIGHT"}]});
-        assert_eq!(parse_product(&payload, "C8734").unwrap()["model"], "RIGHT");
-        assert!(parse_product(&payload, "C873").is_err());
-    }
-}

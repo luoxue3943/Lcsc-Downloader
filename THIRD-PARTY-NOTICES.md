@@ -4,7 +4,7 @@
 - https://lceda.cn/
 - https://easyeda.com/
 
-联网获得的数据及 tests/fixtures 中的回归样例保留上游 HEAD.license 版权字段；导出的 Doc 中记录来源链接及原始版权信息。源数据及上游服务遵循各自条款。
+联网获得的数据保留上游 HEAD.license 版权字段；导出的 Doc 中记录来源链接及原始版权信息。源数据及上游服务遵循各自条款。
 
 本项目的源数据解析器和 Altium ASCII 写入器独立实现，当前版本不依赖 npnp，不包含 npnp 源码、模板或二进制。
 
